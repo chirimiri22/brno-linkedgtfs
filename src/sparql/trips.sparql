@@ -1,0 +1,40 @@
+PREFIX gtfs: <http://vocab.gtfs.org/terms#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+CONSTRUCT {
+  # Construct Trip entity and its properties
+  ?trip a gtfs:Trip ;
+        gtfs:tripId ?trip_id ;
+        gtfs:route ?route ;
+        gtfs:service ?service ;
+        gtfs:tripHeadsign ?trip_headsign ;
+        gtfs:wheelchairAccessible ?wheelchair_accessible ;
+        gtfs:direction ?direction ;
+        gtfs:bikesAllowed ?bikes_allowed .
+
+  # Construct Route entity and its property
+  ?route a gtfs:Route ;
+         gtfs:routeId ?route_id .
+         
+   ?service a gtfs:Service ;
+           gtfs:serviceId ?service_id .
+}
+WHERE {
+  # Bind CSV columns from data to variables
+  BIND(?trip_id AS ?trip_id)  # Bind the input data to ?trip_id
+  
+  # Use IRI to create the Trip entity based on trip_id
+  BIND(IRI(CONCAT("http://example.org/gtfs/trip/", ?trip_id)) AS ?trip)
+  BIND(IRI(CONCAT("http://example.org/routes/", ?route_id_raw)) AS ?route)
+  BIND(IRI(CONCAT("http://example.org/services/", ?service_id_raw)) AS ?service)
+  
+   BIND(?route_id_raw AS ?route_id)
+  BIND(?service_id_raw AS ?service_id)
+  BIND(?trip_headsign_raw AS ?trip_headsign)
+  
+  # Ensure wheelchair_accessible, direction, and bikes_allowed are mapped to integers
+  BIND(xsd:integer(?wheelchair_accessible_raw) AS ?wheelchair_accessible)
+  BIND(xsd:integer(?direction_id_raw) AS ?direction)
+  BIND(xsd:integer(?bikes_allowed_raw) AS ?bikes_allowed)
+}
+

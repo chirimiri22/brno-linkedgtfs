@@ -1,0 +1,40 @@
+BASE <http://example.org/gtfs/>
+PREFIX gtfs: <http://vocab.gtfs.org/terms#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+CONSTRUCT {
+  # Construct the Route entity and its properties
+  ?route a gtfs:Route ;
+         gtfs:routeId ?route_id ;
+         gtfs:agency ?agency ;
+         
+         gtfs:shortName ?route_short_name ;
+          gtfs:longName ?route_long_name ;
+          gtfs:routeType ?route_type ;
+          gtfs:color ?route_color ;
+         gtfs:textColor ?route_text_color .
+       
+  # Construct the Agency entity and its properties
+  ?agency a gtfs:Agency ;
+          gtfs:agencyId ?agency_id .
+}
+WHERE {
+
+# Map CSV columns to variables
+  BIND(?route_id AS ?route_id)
+  BIND(?agency_id AS ?agency_id)
+  
+  # Bind CSV columns to variables for the route
+  BIND(IRI(CONCAT("http://example.org/gtfs/route/", ?route_id)) AS ?route)
+  BIND(IRI(CONCAT("http://example.org/gtfs/agency/", ?agency_id)) AS ?agency)
+  
+  BIND(?route_short_name AS ?route_short_name)
+  BIND(?route_long_name AS ?route_long_name)
+  BIND(xsd:int(?route_type_raw) AS ?route_type)
+  
+  BIND(?route_color AS ?route_color)  # Directly use route_color as it should already be a string
+  BIND(?route_text_color AS ?route_text_color) 
+  
+
+}
+

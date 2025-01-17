@@ -1,0 +1,24 @@
+PREFIX gtfs: <http://vocab.gtfs.org/terms#>
+
+CONSTRUCT {
+  ?agency a gtfs:Agency ;
+          gtfs:agencyId ?agency_id ;
+          gtfs:name ?agency_name ;
+          gtfs:fareUrl ?agency_url ;
+          gtfs:timeZone ?agency_timezone ;
+          gtfs:lang ?agency_lang ;
+          gtfs:phone ?agency_phone .
+}
+WHERE {
+  # Bind CSV columns to variables
+  BIND(?agency_id_raw AS ?agency_id)  # Bind the "agency_id" column to ?agency_id
+  BIND(IRI(CONCAT("http://example.org/gtfs/agency/", ?agency_id)) AS ?agency)
+  
+  # Bind additional CSV columns to their corresponding variables
+  BIND(?agency_name_raw AS ?agency_name)
+  BIND(?agency_url_raw AS ?agency_url)
+  BIND(?agency_timezone_raw AS ?agency_timezone)
+  BIND(?agency_lang_raw AS ?agency_lang)
+  BIND(?agency_phone_raw AS ?agency_phone)
+}
+

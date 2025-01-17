@@ -1,0 +1,35 @@
+PREFIX gtfs: <http://vocab.gtfs.org/terms#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+CONSTRUCT {
+  ?trip a gtfs:Trip ;
+        gtfs:tripId ?trip_id ;
+        gtfs:hasStop ?stopEvent .
+
+  ?stopEvent a gtfs:StopTime ;
+             gtfs:arrivalTime ?arrival_time ;
+             gtfs:departureTime ?departure_time ;
+             gtfs:stopSequence ?stop_sequence ;
+             gtfs:pickupType ?pickup_type ;
+             gtfs:dropOffType ?drop_off_type ;
+             gtfs:stop ?stop .
+             
+  ?stop a gtfs:Stop ;
+        gtfs:stopId ?stop_id .
+}
+WHERE {
+  # Map CSV columns explicitly to variables
+  BIND(IRI(CONCAT("http://example.org/trips/", ?trip_id)) AS ?trip)
+  BIND(IRI(CONCAT("http://example.org/stops/", ?stop_id)) AS ?stop)
+  BIND(IRI(CONCAT("http://example.org/stopEvents/", ?trip_id, "-", ?stop_sequence)) AS ?stopEvent)
+
+  # CSV column bindings
+  BIND(?trip_id_raw AS ?trip_id)
+  BIND(?arrival_time_raw AS ?arrival_time)
+  BIND(?departure_time_raw AS ?departure_time)
+  BIND(?stop_id_raw AS ?stop_id)
+  BIND(xsd:integer(?stop_sequence_raw) AS ?stop_sequence)
+  BIND(xsd:integer(?pickup_type_raw) AS ?pickup_type)
+  BIND(xsd:integer(?drop_off_type_raw) AS ?drop_off_type)
+}
+

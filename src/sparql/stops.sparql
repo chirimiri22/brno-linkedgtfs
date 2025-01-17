@@ -1,0 +1,42 @@
+PREFIX gtfs: <http://vocab.gtfs.org/terms#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+CONSTRUCT {
+  ?stop a gtfs:Stop ;
+        gtfs:stopId ?stop_id ;
+        gtfs:code ?stop_name ;
+         geo:lat ?stop_lat ;
+        geo:long ?stop_lon ;
+        gtfs:zoneId ?zone_id ;
+        gtfs:parentStation ?parent_stop ;
+         gtfs:locationType ?location_type ;
+        gtfs:wheelchairAccessible ?wheelchair_boarding ;
+        gtfs:platformCode ?platform_code .
+        
+
+  ?parentStop a gtfs:Stop ;
+               gtfs:stopId ?parent_station_id .
+  
+}
+WHERE {
+
+ BIND(?stop_id AS ?stop_id)
+  # Bind CSV columns to variables
+  BIND(IRI(CONCAT("http://example.org/gtfs/stops/", ?stop_id)) AS ?stop)
+  BIND(IRI(CONCAT("http://example.org/gtfs/stops/", ?parent_station_id)) AS ?ps)
+ 
+  BIND(?stop_name AS ?stop_name)
+   BIND(xsd:decimal(?stop_lat_raw) AS ?stop_lat)
+  BIND(xsd:decimal(?stop_lon_raw) AS ?stop_lon)
+  BIND(?zone_id AS ?zone_id)
+  BIND(xsd:integer(?location_type_raw) AS ?location_type)
+  BIND(xsd:integer(?wheelchair_boarding_raw) AS ?wheelchair_boarding)
+  BIND(?platform_code AS ?platform_code)
+  
+   # Bind the parent station directly using the parent_station ID
+  BIND(IRI(CONCAT("http://example.org/gtfs/stops/", ?parent_station)) AS ?parent_stop)
+  BIND(?parent_station AS ?parent_station_id)
+
+  
+  }
